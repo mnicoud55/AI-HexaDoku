@@ -44,7 +44,7 @@ def initialize_full_board():
     return board
 
 def initalize_partial_board(board, spaces):
-    # completed board is a board passed through that was created with the initialize_full_board() function
+    # board is a board passed through that was created with the initialize_full_board() function
     # spaces is the number of filled in spaces the HexaDoku board should start with
 
     partial_board = copy.deepcopy(board)
