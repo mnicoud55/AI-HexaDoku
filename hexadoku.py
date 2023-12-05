@@ -1,5 +1,6 @@
 import random
 import copy
+import backtracking
 
 # We used the following stack overflow article as reference for initializing a correct HexaDoku board that has a solution:
 # https://stackoverflow.com/questions/45471152/how-to-create-a-sudoku-puzzle-in-python
@@ -81,5 +82,12 @@ print('\n')
 print('Unfinished board:\n')
 for row in unfinished_board: 
     print(row)
+    
+if (backtracking.backtrackingSearch(unfinished_board, 0, 0)):
+    print("\n\nSolved Board:\n")
+    for row in unfinished_board: 
+        print(row)
+else:
+    print("\nCould not solve.")
 
 
