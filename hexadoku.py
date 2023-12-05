@@ -5,8 +5,8 @@ import backtracking
 # We used the following stack overflow article as reference for initializing a correct HexaDoku board that has a solution:
 # https://stackoverflow.com/questions/45471152/how-to-create-a-sudoku-puzzle-in-python
 
-def hexadoku_formula(rows, columns): 
-    value = (4 * (rows % 4) + rows // 4 + columns) % 16
+def hexadoku_formula(rVar, cVar): 
+    value = (4 * (rVar % 4) + rVar // 4 + cVar) % 16
     return value
 
 mixed_hex_amount = [0, 1, 2, 3]
@@ -19,13 +19,14 @@ def initialize_full_board():
     full_list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     random.shuffle(full_list)
 
-    # initialize basic row
-    rows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    random.shuffle(rows)
+    # initialize basic row (this code only mixes rows within the same 4 row/column subsection to ensure that the validity of the board is upheld)
+    rows = []
+    for x in mixed_hex_amount:
+        for y in mixed_hex_amount:
+            rows.append(x * 4 + y)
  
-    # initialize basic column
-    columns = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    random.shuffle(columns)
+    # initialize basic column (same as row)
+    columns = rows.copy()
 
     # build completed board
     board = []
