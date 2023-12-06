@@ -25,7 +25,7 @@ def isConsistent(grid, row, col, num):
 
 def backtrackingSearch(grid, row, col):
     # base case: if we have reached the end of the board, return True
-    if (row >= N - 1 and col >= N):
+    if row >= N - 1 and col >= N:
         return True
 
     # if at the end of the columns, move on to the next row

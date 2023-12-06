@@ -47,24 +47,24 @@ def initialize_full_board():
     return board
 
 
-def initalize_partial_board(board, spaces):
+def initialize_partial_board(board, spaces):
     # board is a board passed through that was created with the initialize_full_board() function
     # spaces is the number of filled in spaces the sudoku board should start with
 
     partial_board = copy.deepcopy(board)
 
-    # initialize list of possible row indecies (shuffled)
-    rows_indecies = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-    random.shuffle(rows_indecies)
+    # initialize list of possible row indices (shuffled)
+    rows_indices = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    random.shuffle(rows_indices)
 
-    # initialize list of possible column indecies (shuffled)
-    columns_indecies = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-    random.shuffle(columns_indecies)
+    # initialize list of possible column indices (shuffled)
+    columns_indices = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    random.shuffle(columns_indices)
 
     # replace filled in spaces with _ at random
     empty_spaces = 81 - spaces
     while empty_spaces != 0:
-        current_space = (random.choice(rows_indecies), random.choice(columns_indecies))
+        current_space = (random.choice(rows_indices), random.choice(columns_indices))
         x, y = current_space
         if partial_board[x][y] != '_':
             partial_board[x][y] = '_'
@@ -75,7 +75,7 @@ def initalize_partial_board(board, spaces):
 
 
 completed_board = initialize_full_board()
-unfinished_board = initalize_partial_board(completed_board, 50)[0]
+unfinished_board = initialize_partial_board(completed_board, 50)[0]
 print('Completed board:\n')
 for row in completed_board:
     print(row)
@@ -86,9 +86,13 @@ print('Unfinished board:\n')
 for row in unfinished_board:
     print(row)
 
-if (sudoku_backtracking.backtrackingSearch(unfinished_board, 0, 0)):
+if sudoku_backtracking.backtrackingSearch(unfinished_board, 0, 0):
     print("\n\nSolved Board:\n")
     for row in unfinished_board:
         print(row)
+    if unfinished_board == completed_board:
+        print("Solution is the same as completed board")
+    else:
+        print("Solution is NOT the same as completed board")
 else:
     print("\nCould not solve.")
