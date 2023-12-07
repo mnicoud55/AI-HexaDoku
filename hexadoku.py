@@ -75,24 +75,3 @@ def initialize_partial_board(board, spaces):
     # returns the list [partially completed board, fully completed board]
     return [partial_board, board]   
 
-
-completed_board = initialize_full_board()
-unfinished_board = initialize_partial_board(completed_board, 150)[0]
-print('Completed board:\n')
-for row in completed_board: 
-    print(row)
-
-print('\n')
-
-print('Unfinished board:\n')
-for row in unfinished_board: 
-    print(row)
-    
-if backtracking.backtrackingSearch(unfinished_board, 0, 0):
-    print("\n\nSolved Board:\n")
-    for row in unfinished_board: 
-        print(row)
-else:
-    print("\nCould not solve.")
-
-
