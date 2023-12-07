@@ -3,8 +3,9 @@ import backtracking
 import time
 
 ###
- #  Records the time and success rate of the backtracking algorithm over n hexadoku 
- #  boards each starting with m clues (prefilled cells), given n and m as input
+ #  The user selects the range of board types to test and the number of iterations n
+ #  to run each board type. The solver runs each board between the upper and lower bound 
+ #  n times and prints the success rate and average solving time of each type.
 ###
 
 upper_bound = int(input("Upper clue bound (inclusive): "))
@@ -12,6 +13,7 @@ lower_bound = int(input("Lower clue bound (inclusive): "))
 num_types = upper_bound - lower_bound
 num_iterations = int(input("Iterations per board type: "))
 print("")
+
 real_start = time.time()
 for num_clues in range (upper_bound, lower_bound-1, -1):
     num_solved = 0
