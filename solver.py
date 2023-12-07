@@ -7,46 +7,45 @@ import time
  #  boards each starting with m clues (prefilled cells), given n and m as input
 ###
 
-num_clues = int(input("Enter number of clues (0-255): "))
-num_iterations = int(input("Enter number of iterations: "))
-num_solved = 0
-total_time = 0
-avg_time = 0
-
+upper_bound = int(input("Upper clue bound (inclusive): "))
+lower_bound = int(input("Lower clue bound (inclusive): "))
+num_types = upper_bound - lower_bound
+num_iterations = int(input("Iterations per board type: "))
+print("")
 real_start = time.time()
-for i in range (num_iterations):
+for num_clues in range (upper_bound, lower_bound-1, -1):
+    num_solved = 0
+    total_time = 0
+    avg_time = 0
 
-    # initialize board
-    completed_board = hexadoku.initialize_full_board()
-    unfinished_board = hexadoku.initialize_partial_board(completed_board, num_clues)[0]
+    for i in range (num_iterations):
 
-    # solve
-    start = time.time()
-    solved = backtracking.backtrackingSearch(unfinished_board, 0, 0)
-    end = time.time()
-    func_time = end - start
+        # initialize board
+        completed_board = hexadoku.initialize_full_board()
+        unfinished_board = hexadoku.initialize_partial_board(completed_board, num_clues)[0]
 
-    # time updates and progress bar
-    if solved:
-        num_solved += 1
-        total_time += func_time
-        avg_time += func_time
-        if i == num_iterations - 1 or (i%10 == 0 and i > 0):
-            print("|")
+        # solve
+        start = time.time()
+        solved = backtracking.backtrackingSearch(unfinished_board, 0, 0)
+        end = time.time()
+        func_time = end - start
+
+        # time updates
+        if solved:
+            num_solved += 1
+            total_time += func_time
+            avg_time += func_time
         else:
-            print("|", end =" ", flush=True)
-    else:
-        total_time += func_time
-        if i == num_iterations - 1 or (i%10 == 0 and i > 0):
-            print("X")
-        else:
-            print("X", end =" ", flush=True)
+            total_time += func_time
+
+    solve_rate = num_solved / num_iterations
+    avg_time = total_time / num_iterations
+
+    print("Clues:", num_clues)
+    print("\tSuccess rate:   ", solve_rate*100, "%\n\tAvg solve time: ", avg_time, " sec", sep='')
 
 real_end = time.time()
-
 real_time = real_end - real_start
-solve_rate = num_solved / num_iterations
-avg_time = total_time / num_iterations
 
-print(num_iterations, " boards solved in ", real_time, " seconds (", total_time, " function time).", sep='')
-print("Success rate: ", solve_rate*100, "%\nAverage solving time: ", avg_time, " seconds", sep='')
+print("\n", num_iterations * num_types, " boards solved in ", real_time, " seconds.", sep='')
+    
