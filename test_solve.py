@@ -14,18 +14,15 @@ hex_dict = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 'A',
 completed_board = hexadoku.initialize_full_board()
 unfinished_board = hexadoku.initialize_partial_board(completed_board, 150)[0]
 print('Completed board:\n')
-for row in completed_board: 
-    print(row)
+hexadoku.print_board(completed_board)
 
 print('\n')
 
 print('Unfinished board:\n')
-for row in unfinished_board: 
-    print(row)
+hexadoku.print_board(unfinished_board)
     
 if backtracking.backtrackingSearch(unfinished_board, 0, 0):
     print("\n\nSolved Board:\n")
-    for row in unfinished_board: 
-        print(row)
+    hexadoku.print_board(unfinished_board)
 else:
     print("\nCould not solve.")
