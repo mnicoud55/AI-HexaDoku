@@ -1,0 +1,249 @@
+import hexadoku
+import random
+
+###
+ # Implementation of a hexadoku solver which employs a cultural genetic algorithm.
+ # The algorithm generates a population of boards or 'individuals' which are filled with
+ # random values, then progressively improves the population by selecting individuals to
+ # reproduce, then replacing the individuals with the worst fitness values with the new 
+ # offspring. Crossover and mutation is implemented for each new offspring.
+ # This process is repeated until an individual contains a valid solution to the puzzle.
+###
+
+grids = [ 
+        [ 0,  0,  0,  0,  1,  1,  1,  1,  2,  2,  2,  2,  3,  3,  3,  3 ],
+        [ 0,  0,  0,  0,  1,  1,  1,  1,  2,  2,  2,  2,  3,  3,  3,  3 ],
+        [ 0,  0,  0,  0,  1,  1,  1,  1,  2,  2,  2,  2,  3,  3,  3,  3 ],
+        [ 0,  0,  0,  0,  1,  1,  1,  1,  2,  2,  2,  2,  3,  3,  3,  3 ],
+        [ 4,  4,  4,  4,  5,  5,  5,  5,  6,  6,  6,  6,  7,  7,  7,  7 ],
+        [ 4,  4,  4,  4,  5,  5,  5,  5,  6,  6,  6,  6,  7,  7,  7,  7 ],
+        [ 4,  4,  4,  4,  5,  5,  5,  5,  6,  6,  6,  6,  7,  7,  7,  7 ],
+        [ 4,  4,  4,  4,  5,  5,  5,  5,  6,  6,  6,  6,  7,  7,  7,  7 ],
+        [ 8,  8,  8,  8,  9,  9,  9,  9,  10, 10, 10, 10, 11, 11, 11, 11],
+        [ 8,  8,  8,  8,  9,  9,  9,  9,  10, 10, 10, 10, 11, 11, 11, 11],
+        [ 8,  8,  8,  8,  9,  9,  9,  9,  10, 10, 10, 10, 11, 11, 11, 11],
+        [ 8,  8,  8,  8,  9,  9,  9,  9,  10, 10, 10, 10, 11, 11, 11, 11],
+        [ 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15],
+        [ 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15],
+        [ 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15],
+        [ 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15]
+         ]
+
+def initialize(board, population):
+    ###
+     # Initializes a population of boards filled with random values from the given incomplete board.
+     # The random values adhere to the belief space, i.e. they must be digits 0-9 and aren't repetitions
+     # of the clues given in each row, column, and grid 
+    ###
+    individuals = []
+    for i in range (population):
+        # Make a copy of the empty board
+        indiv = [[None] * 16 for _ in range(16)]
+        for i in range (0, 16):
+             for j in range (0, 16):
+                 indiv[i][j] = board[i][j]
+
+        # Fill board with values
+        for j, row in enumerate(board):
+            for k, col in enumerate(board[j]):
+                if board[j][k] == '_':
+                    indiv[j][k] = generate_gene(j, k, board)
+        fit = get_fitness(indiv)
+        individuals.append(fit)
+        
+    return individuals
+                
+def generate_gene(rowPos, colPos, board):
+    ###
+     # Generates a random hex value for a cell that doesn't
+     # repeat any clues that are in its row, column, or grid.
+    ###
+    pos_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F']
+
+    # get the row, column, and grid into their own lists
+    attributes = get_attributes(board)
+    row = attributes["rows"][rowPos]
+    col = attributes["cols"][colPos]
+    gridNum = grids[rowPos][colPos]
+    grid = attributes["grids"][gridNum]
+
+    # Eliminate digits that would violate belief space
+    for val in row:
+        if val in pos_values:
+            pos_values.remove(val)
+    for val in col:
+        if val in pos_values:
+            pos_values.remove(val)
+    for val in grid:
+        if val in pos_values:
+            pos_values.remove(val)
+    
+    return random.choice(pos_values)
+    
+def tournament(individuals, tourney_size, num_offspring):
+    ###
+     # Selects a subpopulation from the individuals and performs a 
+     # deterministic tournament selection on that subpopulation.
+    ###
+    num_winners = 2*num_offspring
+
+    # Select competitors at random
+    competitors = random.sample(individuals, tourney_size)
+    competitors = sorted(competitors, key=lambda x: x[1])
+
+    # Select the boards with the best fitness
+    #sorted_indivs = sorted(individuals, key=lambda x: x[1])
+    #competitors = sorted_indivs[0:tourney_size]
+
+    winners = []
+    for i in range (num_winners):
+        winners.append(competitors[i])
+    
+    return winners
+
+def get_fitness(board):
+    ###
+     # Calculates fitness of the given board.
+     # Fitness is the number of errors (repetitions), so a low fitness is better.
+     # A fitness of 0 means that the board is solved.
+    ###
+    attributes = get_attributes(board)
+    fitness = 0
+    for row in attributes["rows"]:
+        fitness += len(row) - len(set(row))
+    for col in attributes["cols"]:
+        fitness += len(col) - len(set(col))
+    for grid in attributes["grids"]:
+        fitness += len(grid) - len(set(grid))
+
+    return (board, fitness)
+            
+def get_attributes(board):
+    ###
+     # Returns a dict containing every row, column, and grid in 
+     # the given board so they can be easily iterated through.
+    ###
+    attributes = {
+        "rows": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []], 
+        "cols": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []], 
+        "grids":[[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
+        }
+
+    for i, row in enumerate(board):
+        attributes["rows"][i] = row
+        for j, col in enumerate(board[i]):
+            attributes["cols"][j].append(col)
+            grid = grids[i][j]
+            attributes["grids"][grid].append(col)
+    return attributes
+
+def reproduce(starting_board, board1, board2, spaces, num_mutations):
+    ###
+     # Creates an offspring from the 2 parent boards. 
+     # Single point, simple crossover is implemented, which selects a random value
+     # between 1 and the number of empty cells. The child is constructed with
+     # values from parent 1 for all the spaces before the generated value, and all the
+     # cells following the value are taken from parent 2.
+     # 
+     # The child also undergoes mutation, which randomly selects cells and assigns 
+     # them random values (which comply with the belief space)
+    ###
+    values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F']
+    child = [[None] * 16 for _ in range(16)]
+
+    # get crossover value
+    crossover = random.randint(1, spaces)
+
+    # generate mutations
+    mutations = []
+    for i in range (num_mutations):
+        mutations.append((random.randint(0, spaces-1), random.choice(values)))
+        mutations = sorted(mutations, key=lambda x: x[0])
+
+    # Construct child
+    space_num = 0
+    for r in range (0, 16):
+        for c in range (0, 16):
+            if len(mutations) > 0 and space_num == mutations[0][0]:
+                child[r][c] = mutations[0][1]
+                mutations.pop(0)
+            else:
+                if starting_board[r][c] == '_':
+                    space_num += 1
+                if space_num < crossover:
+                    child[r][c] = board1[0][r][c]
+                else:
+                    child[r][c] = board2[0][r][c]
+    return get_fitness(child)
+            
+def replace(individuals, new_indivs):
+    ###
+     # Replaces the boards with the worst fitness with the newly generated boards
+    ###
+    sorted_indivs = sorted(individuals, key=lambda x: x[1], reverse=True)
+    n = len(new_indivs)
+    for i in range(n):
+        sorted_indivs.pop(0)
+        sorted_indivs.append(new_indivs[i])
+
+    sorted_indivs = sorted(sorted_indivs, key=lambda x: x[1], reverse=True)
+    
+    return sorted_indivs
+
+# adjustable variables
+num_clues = 205
+population_size = 50
+num_offspring = 2
+num_mutations = 3
+
+num_spaces = 256 - num_clues
+solution = hexadoku.initialize_full_board()
+starting_board = hexadoku.initialize_partial_board(solution, num_clues)[0]
+
+# Print solution and empty board
+#for i in range (0, 16):
+#    print(solution[i])
+#print("-----")
+print("Empty Board:")
+for i in range (0, 16):
+    print(starting_board[i])
+print("-----")
+
+# Create first generation
+individuals = initialize(starting_board, population_size)
+
+# Check if the first generation solved the board
+solved_board = None
+for i in range (population_size):
+        if individuals[i][1] == 0:
+            solved_board = individuals[i][0]
+
+# Iterate until solution is found
+iterations = 0
+while solved_board == None:
+
+    # Select boards for reproduction
+    winners = tournament(individuals, 25, num_offspring)
+
+    # Create offspring
+    children = []
+    for j in range (0, num_offspring*2, 2):
+        children.append(reproduce(starting_board, winners[j], winners[j+1], num_spaces, num_mutations))
+
+    # Replace worst fitting boards with the new offspring
+    individuals = replace(individuals, children)
+
+    # Check if the solution has been found
+    if individuals[-1][1] == 0:
+        solved_board = individuals[-1][0]
+
+    iterations += 1
+
+print("Solved in", iterations, "generations.")
+
+# Print solution
+for i in range (0, 16):
+    print(solved_board[i])
+if (solved_board == solution):
+    print("Found intended solution.")
+
