@@ -75,3 +75,17 @@ def initialize_partial_board(board, spaces):
     # returns the list [partially completed board, fully completed board]
     return [partial_board, board]   
 
+def print_board(board):
+    print("-----------------------------------------------------")
+    for i in range (0, 16):
+        print("|", sep='', end='')
+        for j in range (0, 16):
+            if j == 15:
+                print(" ", board[i][j], " ", sep='', end='|\n')
+            elif j == 3 or j == 7 or j == 11:
+                print(" ", board[i][j], " |", sep='', end='')
+            else:
+                print(" ", board[i][j], " ", sep='', end='')
+        if i == 3 or i == 7 or i == 11:
+            print("|------------|------------|------------|------------|")
+    print("-----------------------------------------------------")

@@ -36,10 +36,8 @@ solution = hexadoku.initialize_full_board()
 starting_board = hexadoku.initialize_partial_board(solution, num_clues)[0]
 
 # Print empty board
-print("Empty Board:")
-for i in range (0, 16):
-    print(starting_board[i])
-print("-----")
+print("Starting Board:")
+hexadoku.print_board(starting_board)
 
 # Create first generation
 individuals = cultural_genetic_algo.initialize(starting_board, population_size)
@@ -74,10 +72,8 @@ while solved_board == None:
         
     iterations += 1
 
-print("Solved in", iterations, "generations.")
-
 # Print solution
-for i in range (0, 16):
-    print(solved_board[i])
+print("Solved in", iterations, "generations.")
+hexadoku.print_board(solved_board)
 if (solved_board == solution):
     print("Found intended solution.")
