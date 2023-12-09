@@ -1,8 +1,8 @@
-import hexadoku
+import sudoku
 import random
 
 ###
- #  Functions for a hexadoku solver which employs a cultural genetic algorithm.
+ #  Functions for a sudoku solver which employs a cultural genetic algorithm.
  #  The algorithm generates a population of boards or 'individuals' which are filled with
  #  random values, then progressively improves the population by selecting individuals to
  #  reproduce, then replacing the individuals with the worst fitness values with the new 
@@ -11,22 +11,15 @@ import random
 ###
 
 grids = [ 
-        [ 0,  0,  0,  0,  1,  1,  1,  1,  2,  2,  2,  2,  3,  3,  3,  3 ],
-        [ 0,  0,  0,  0,  1,  1,  1,  1,  2,  2,  2,  2,  3,  3,  3,  3 ],
-        [ 0,  0,  0,  0,  1,  1,  1,  1,  2,  2,  2,  2,  3,  3,  3,  3 ],
-        [ 0,  0,  0,  0,  1,  1,  1,  1,  2,  2,  2,  2,  3,  3,  3,  3 ],
-        [ 4,  4,  4,  4,  5,  5,  5,  5,  6,  6,  6,  6,  7,  7,  7,  7 ],
-        [ 4,  4,  4,  4,  5,  5,  5,  5,  6,  6,  6,  6,  7,  7,  7,  7 ],
-        [ 4,  4,  4,  4,  5,  5,  5,  5,  6,  6,  6,  6,  7,  7,  7,  7 ],
-        [ 4,  4,  4,  4,  5,  5,  5,  5,  6,  6,  6,  6,  7,  7,  7,  7 ],
-        [ 8,  8,  8,  8,  9,  9,  9,  9,  10, 10, 10, 10, 11, 11, 11, 11],
-        [ 8,  8,  8,  8,  9,  9,  9,  9,  10, 10, 10, 10, 11, 11, 11, 11],
-        [ 8,  8,  8,  8,  9,  9,  9,  9,  10, 10, 10, 10, 11, 11, 11, 11],
-        [ 8,  8,  8,  8,  9,  9,  9,  9,  10, 10, 10, 10, 11, 11, 11, 11],
-        [ 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15],
-        [ 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15],
-        [ 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15],
-        [ 12, 12, 12, 12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15]
+        [ 0, 0, 0, 1, 1, 1, 2, 2, 2],
+        [ 0, 0, 0, 1, 1, 1, 2, 2, 2],
+        [ 0, 0, 0, 1, 1, 1, 2, 2, 2],
+        [ 3, 3, 3, 4, 4, 4, 5, 5, 5],
+        [ 3, 3, 3, 4, 4, 4, 5, 5, 5],
+        [ 3, 3, 3, 4, 4, 5, 5, 5, 5],
+        [ 6, 6, 6, 7, 7, 7, 8, 8, 8],
+        [ 6, 6, 6, 7, 7, 7, 8, 8, 8],
+        [ 6, 6, 6, 7, 7, 7, 8, 8, 8]
          ]
 
 def initialize(board, population):
@@ -38,9 +31,9 @@ def initialize(board, population):
     individuals = []
     for i in range (population):
         # Make a copy of the empty board
-        indiv = [[None] * 16 for _ in range(16)]
-        for i in range (0, 16):
-             for j in range (0, 16):
+        indiv = [[None] * 9 for _ in range(9)]
+        for i in range (0, 9):
+             for j in range (0, 9):
                  indiv[i][j] = board[i][j]
 
         # Fill board with values
@@ -55,10 +48,10 @@ def initialize(board, population):
                 
 def generate_gene(rowPos, colPos, board):
     ###
-     #  Generates a random hex value for a cell that doesn't
+     #  Generates a random digit for a cell that doesn't
      #  repeat any clues that are in its row, column, or grid.
     ###
-    pos_values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F']
+    pos_values = [ 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
     # get the row, column, and grid into their own lists
     attributes = get_attributes(board)
@@ -124,9 +117,9 @@ def get_attributes(board):
      #  the given board so they can be easily iterated through.
     ###
     attributes = {
-        "rows": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []], 
-        "cols": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []], 
-        "grids":[[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
+        "rows": [[], [], [], [], [], [], [], [], []], 
+        "cols": [[], [], [], [], [], [], [], [], []], 
+        "grids":[[], [], [], [], [], [], [], [], []]
         }
 
     for i, row in enumerate(board):
@@ -148,8 +141,8 @@ def reproduce(starting_board, board1, board2, spaces, num_mutations):
      #  The child also undergoes mutation, which randomly selects cells and assigns 
      #  them random values (which comply with the belief space)
     ###
-    values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F']
-    child = [[None] * 16 for _ in range(16)]
+    values = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    child = [[None] * 9 for _ in range(9)]
 
     # get crossover value
     crossover = random.randint(1, spaces)
@@ -162,8 +155,8 @@ def reproduce(starting_board, board1, board2, spaces, num_mutations):
 
     # Construct child
     space_num = 0
-    for r in range (0, 16):
-        for c in range (0, 16):
+    for r in range (0, 9):
+        for c in range (0, 9):
             if len(mutations) > 0 and space_num == mutations[0][0]:
                 child[r][c] = mutations[0][1]
                 mutations.pop(0)

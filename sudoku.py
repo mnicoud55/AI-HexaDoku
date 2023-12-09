@@ -73,26 +73,17 @@ def initialize_partial_board(board, spaces):
     # returns the list [partially completed board, fully completed board]
     return [partial_board, board]
 
-
-completed_board = initialize_full_board()
-unfinished_board = initialize_partial_board(completed_board, 50)[0]
-print('Completed board:\n')
-for row in completed_board:
-    print(row)
-
-print('\n')
-
-print('Unfinished board:\n')
-for row in unfinished_board:
-    print(row)
-
-if sudoku_backtracking.backtrackingSearch(unfinished_board, 0, 0):
-    print("\n\nSolved Board:\n")
-    for row in unfinished_board:
-        print(row)
-    if unfinished_board == completed_board:
-        print("Solution is the same as completed board")
-    else:
-        print("Solution is NOT the same as completed board")
-else:
-    print("\nCould not solve.")
+def print_board(board):
+    print("-------------------------------")
+    for i in range (0, 9):
+        print("|", sep='', end='')
+        for j in range (0, 9):
+            if j == 8:
+                print(" ", board[i][j], " ", sep='', end='|\n')
+            elif j == 2 or j == 5 or j == 8:
+                print(" ", board[i][j], " |", sep='', end='')
+            else:
+                print(" ", board[i][j], " ", sep='', end='')
+        if i == 2 or i == 5:
+            print("|---------|---------|---------|")
+    print("-------------------------------")

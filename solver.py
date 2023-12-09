@@ -43,8 +43,7 @@ for num_clues in range (upper_bound, lower_bound-1, -1):
     solve_rate = num_solved / num_iterations
     avg_time = total_time / num_iterations
 
-    print("Clues:", num_clues)
-    print("\tSuccess rate:   ", solve_rate*100, "%\n\tAvg solve time: ", avg_time, " sec", sep='')
+    print(avg_time)
 
 real_end = time.time()
 real_time = real_end - real_start
