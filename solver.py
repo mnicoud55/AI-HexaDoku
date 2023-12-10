@@ -10,7 +10,7 @@ import time
 
 upper_bound = int(input("Upper clue bound (inclusive): "))
 lower_bound = int(input("Lower clue bound (inclusive): "))
-num_types = upper_bound - lower_bound
+num_types = upper_bound - lower_bound + 1 # the number was wrong without this
 num_iterations = int(input("Iterations per board type: "))
 print("")
 
@@ -19,6 +19,9 @@ for num_clues in range (upper_bound, lower_bound-1, -1):
     num_solved = 0
     total_time = 0
     avg_time = 0
+    total_same = 0
+    same_time = 0
+    max_time = 0
 
     for i in range (num_iterations):
 
@@ -32,18 +35,31 @@ for num_clues in range (upper_bound, lower_bound-1, -1):
         end = time.time()
         func_time = end - start
 
+        same_board = unfinished_board == completed_board
         # time updates
         if solved:
             num_solved += 1
             total_time += func_time
             avg_time += func_time
+            if same_board:
+                total_same += 1
+                same_time += func_time
+            if func_time > max_time:
+                max_time = func_time
+
         else:
             total_time += func_time
 
     solve_rate = num_solved / num_iterations
     avg_time = total_time / num_iterations
 
-    print(avg_time)
+    avg_same_time = same_time / (total_same + 0.0000001)
+
+    # print(num_clues, "clues on average takes", avg_time, "seconds with the backtracking algorithm.", total_same, "/", num_iterations, "found the intended solution.")
+    # print("   ", avg_same_time, "seconds with the backtracking algorithm for those that found the intended solution")
+    # print("   ", max_time, "max time seconds with the backtracking algorithm")
+
+    print(num_clues, avg_time, max_time, avg_same_time, total_same, "/", num_iterations)
 
 real_end = time.time()
 real_time = real_end - real_start
