@@ -1,6 +1,7 @@
 import sys
 import hexadoku
 import cultural_genetic_algo
+import time
 
 ###
  #  Implementation of a hexadoku solver which employs a cultural genetic algorithm using 
@@ -31,17 +32,20 @@ else:
 
 num_spaces = 256 - num_clues
 for _ in range (num_boards): 
+
     # initialize board
     solution = hexadoku.initialize_full_board()
     starting_board = hexadoku.initialize_partial_board(solution, num_clues)[0]
 
     # Print empty board
-    print("Starting Board:")
-    hexadoku.print_board(starting_board)
+    # print("Starting Board:")
+    # hexadoku.print_board(starting_board)
+    # print("Solution:")
+    # hexadoku.print_board(solution)
 
+    start = time.time()
     # Create first generation
     individuals = cultural_genetic_algo.initialize(starting_board, population_size)
-
     # Check if the first generation solved the board
     solved_board = None
     for i in range (population_size):
@@ -77,9 +81,10 @@ for _ in range (num_boards):
             print("\r", fit, " ", sep='', end='')
             
         iterations += 1
-
-    # Print solution
-    hexadoku.print_board(solved_board)
-    print("Solved in", iterations, "generations.")
+    end = time.time()
+    t = end - start
+    # # Print solution
+    # hexadoku.print_board(solved_board)
+    print(iterations, t)
     if (solved_board == solution):
         print("Found intended solution.")
