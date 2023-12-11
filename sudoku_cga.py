@@ -16,7 +16,7 @@ grids = [
         [ 0, 0, 0, 1, 1, 1, 2, 2, 2],
         [ 3, 3, 3, 4, 4, 4, 5, 5, 5],
         [ 3, 3, 3, 4, 4, 4, 5, 5, 5],
-        [ 3, 3, 3, 4, 4, 5, 5, 5, 5],
+        [ 3, 3, 3, 4, 4, 4, 5, 5, 5],
         [ 6, 6, 6, 7, 7, 7, 8, 8, 8],
         [ 6, 6, 6, 7, 7, 7, 8, 8, 8],
         [ 6, 6, 6, 7, 7, 7, 8, 8, 8]
@@ -51,7 +51,7 @@ def generate_gene(rowPos, colPos, board):
      #  Generates a random digit for a cell that doesn't
      #  repeat any clues that are in its row, column, or grid.
     ###
-    pos_values = [ 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    pos_values = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
     # get the row, column, and grid into their own lists
     attributes = get_attributes(board)
