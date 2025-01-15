@@ -3,4 +3,4 @@ Group Members / Contributors: Aidan Ward (https://github.com/Aidan-JW), Luke Cre
 
 Description: An AI HexaDoku and Sudoku solver using two different methods, backtracking and stochastic optimization, completed for CS 4710 (Artificial Intelligence) at the University of Virginia.
 
-Original Repo: [https://github.com/jbrady1203/CS4750_final_deliverable](https://github.com/LukeCreech/AI-HexaDoku)
+Original Repo: [https://github.com/LukeCreech/AI-HexaDoku](https://github.com/LukeCreech/AI-HexaDoku)
